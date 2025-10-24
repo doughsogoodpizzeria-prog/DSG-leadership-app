@@ -1,46 +1,622 @@
-# DSG-leadership-app
-Training app for future leaders [Uploading netlify.toml…]()[build]
-  command = "npm run build"
-  publish = "build"
+import React, { useState, useEffect } from 'react';
+import { 
+  Star, 
+  BookOpen, 
+  Users, 
+  Target, 
+  TrendingUp, 
+  Award, 
+  Play, 
+  Headphones, 
+  FileText, 
+  Smartphone,
+  CheckCircle,
+  Circle,
+  ArrowRight,
+  BarChart3,
+  Zap,
+  Globe,
+  Shield,
+  MessageCircle,
+  Lightbulb,
+  Clock,
+  Calendar,
+  ChefHat,
+  Coffee,
+  UserPlus,
+  Settings
+} from 'lucide-react';
 
-[[redirects]]
-  from = "/*"[packagejson DSG App.txt](https://github.com/user-attachments/files/23111185/packagejson.DSG.App.txt){
-  "name": "dsg-leadership-app",
-  "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "lucide-react": "^0.263.1"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
-}
+const DSGLeadershipApp = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [userRole, setUserRole] = useState('Manager'); // Joe, Aoife, or Future Leader
+  const [userName, setUserName] = useState('Joe'); // Switch between Joe/Aoife
+  const [currentStreak, setCurrentStreak] = useState(15);
+  
+  // Leadership competencies for managers/leaders
+  const [leadershipScores, setLeadershipScores] = useState({
+    teamDevelopment: 7,
+    strategicThinking: 6,
+    changeManagement: 8,
+    conflictResolution: 7,
+    businessAcumen: 8,
+    cultureDevelopment: 9
+  });
+  
+  const [completedActivities, setCompletedActivities] = useState(new Set(['ramsay', 'meyer']));
+  
+  // Leadership examples for DSG managers
+  const leadershipExamples = [
+    {
+      name: "Gordon Ramsay",
+      title: "High Standards Leadership",
+      image: "👨‍🍳",
+      lesson: "Demanding excellence while developing people",
+      managerApplication: "How to maintain DSG quality standards while coaching team growth",
+      videoUrl: "https://youtube.com/watch?v=leadership-standards",
+      completed: completedActivities.has('ramsay'),
+      focus: "Performance Management"
+    },
+    {
+      name: "Danny Meyer", 
+      title: "Hospitality Culture Builder",
+      image: "🤝",
+      lesson: "Culture eats strategy for breakfast",
+      managerApplication: "Creating DSG culture that drives both performance and engagement",
+      videoUrl: "https://youtube.com/watch?v=culture-leadership",
+      completed: completedActivities.has('meyer'),
+      focus: "Culture Development"
+    },
+    {
+      name: "Ray Kroc",
+      title: "Systems & Scale Leader",
+      image: "🏗️",
+      lesson: "Consistency through systems, growth through people",
+      managerApplication: "Building scalable DSG operations while developing local leadership",
+      videoUrl: "https://youtube.com/watch?v=systems-leadership",
+      completed: completedActivities.has('kroc'),
+      focus: "Operational Excellence"
+    },
+    {
+      name: "Howard Schultz",
+      title: "Employee-First Leader", 
+      image: "☕",
+      lesson: "Treat employees better than customers and they'll treat customers better",
+      managerApplication: "DSG leadership philosophy: develop your people, they'll develop your business",
+      videoUrl: "https://youtube.com/watch?v=employee-leadership",
+      completed: completedActivities.has('schultz'),
+      focus: "People Development"
+    }
+  ];
 
-  to = "/index.html"
-  status = 200
+  // Manager/Leader competencies
+  const leadershipCompetencies = [
+    { 
+      key: 'teamDevelopment', 
+      name: 'Team Development', 
+      icon: '👥', 
+      color: 'bg-blue-500',
+      description: 'Developing others into leaders',
+      example: 'Like coaching Will to improve communication and initiative'
+    },
+    { 
+      key: 'strategicThinking', 
+      name: 'Strategic Thinking', 
+      icon: '🎯', 
+      color: 'bg-green-500',
+      description: 'Long-term planning and vision',
+      example: 'Building sustainable DSG growth and market position'
+    },
+    { 
+      key: 'changeManagement', 
+      name: 'Change Management', 
+      icon: '🔄', 
+      color: 'bg-purple-500',
+      description: 'Leading through transitions',
+      example: 'Implementing new systems while maintaining team morale'
+    },
+    { 
+      key: 'conflictResolution', 
+      name: 'Conflict Resolution', 
+      icon: '⚖️', 
+      color: 'bg-orange-500',
+      description: 'Managing difficult conversations and disputes',
+      example: 'Resolving team conflicts while maintaining relationships'
+    },
+    { 
+      key: 'businessAcumen', 
+      name: 'Business Acumen', 
+      icon: '📊', 
+      color: 'bg-red-500',
+      description: 'Understanding DSG business drivers',
+      example: 'Balancing costs, quality, and growth objectives'
+    },
+    { 
+      key: 'cultureDevelopment', 
+      name: 'Culture Development', 
+      icon: '🌟', 
+      color: 'bg-indigo-500',
+      description: 'Building positive team culture',
+      example: 'Creating environment where people want to grow and excel'
+    }
+  ];
 
+  const todaysLeadershipTip = {
+    title: "Manager Development Focus",
+    content: "Great leaders create more leaders, not more followers. Today, identify one team member's potential and take one action to develop it.",
+    action: "Have a 5-minute career development conversation with someone you manage."
+  };
 
+  const currentChallenge = {
+    title: "This Month's Leadership Challenge",
+    description: "Develop one team member's skills in their weakest area (like Will's communication development)",
+    dueDate: "End of month",
+    progress: 65
+  };
+
+  const toggleActivity = (activityId) => {
+    const newCompleted = new Set(completedActivities);
+    if (newCompleted.has(activityId)) {
+      newCompleted.delete(activityId);
+    } else {
+      newCompleted.add(activityId);
+    }
+    setCompletedActivities(newCompleted);
+  };
+
+  // Navigation Component
+  const Navigation = () => (
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
+      <div className="flex justify-around max-w-md mx-auto">
+        {[
+          { id: 'dashboard', icon: BarChart3, label: 'Dashboard' },
+          { id: 'leaders', icon: ChefHat, label: 'Examples' },
+          { id: 'develop', icon: UserPlus, label: 'Develop Others' },
+          { id: 'scenarios', icon: Coffee, label: 'Scenarios' },
+          { id: 'network', icon: MessageCircle, label: 'Network' }
+        ].map(({ id, icon: Icon, label }) => (
+          <button
+            key={id}
+            onClick={() => setActiveTab(id)}
+            className={`flex flex-col items-center py-2 px-3 rounded-lg transition-colors ${
+              activeTab === id 
+                ? 'text-orange-600 bg-orange-50' 
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            <Icon size={20} />
+            <span className="text-xs mt-1">{label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  // Dashboard Tab - For Manager/Leader Development
+  const DashboardTab = () => (
+    <div className="space-y-6 pb-20">
+      {/* Manager Header */}
+      <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 rounded-lg">
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <h1 className="text-xl font-bold">🍕 Welcome {userName}!</h1>
+            <p className="text-sm opacity-90">DSG Leadership Development</p>
+            <p className="text-xs opacity-75">Role: {userRole} • Building Future Leaders</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs opacity-75">Team Size</p>
+            <p className="text-sm font-medium">12 Members</p>
+            <p className="text-xs opacity-75">3 In Development</p>
+          </div>
+        </div>
+        <div className="flex items-center mt-3">
+          <div className="flex space-x-1">
+            {[...Array(7)].map((_, i) => (
+              <div key={i} className={`w-2 h-2 rounded-full ${i < 5 ? 'bg-white' : 'bg-white/30'}`} />
+            ))}
+          </div>
+          <span className="ml-3 text-sm">{currentStreak} days of leadership focus! 🔥</span>
+        </div>
+      </div>
+
+      {/* Leadership Development Focus */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="flex items-start space-x-3">
+          <Lightbulb className="text-blue-600 mt-1" size={20} />
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-800">{todaysLeadershipTip.title}</h3>
+            <p className="text-gray-600 mt-1 text-sm">{todaysLeadershipTip.content}</p>
+            <div className="mt-3 bg-blue-100 p-3 rounded border-l-4 border-blue-400">
+              <p className="text-sm font-medium text-blue-800">Action Today: {todaysLeadershipTip.action}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Team Development Overview */}
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <h2 className="text-lg font-semibold mb-4 flex items-center">
+          <TrendingUp className="mr-2 text-green-600" size={20} />
+          Your Leadership Development
+        </h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-orange-600">3</div>
+            <div className="text-sm text-gray-600">People Developing</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-green-600">
+              {Math.round(Object.values(leadershipScores).reduce((a, b) => a + b, 0) / 6 * 10)}%
+            </div>
+            <div className="text-sm text-gray-600">Leadership Skills</div>
+          </div>
+        </div>
+        <div className="mt-4 p-3 bg-gray-50 rounded">
+          <p className="text-sm text-gray-600">
+            <strong>Focus:</strong> Currently developing Will (communication + initiative), Sarah (confidence), Tom (customer service leadership)
+          </p>
+        </div>
+      </div>
+
+      {/* Current Development Challenge */}
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <h2 className="text-lg font-semibold mb-3 flex items-center">
+          <Target className="mr-2 text-purple-600" size={20} />
+          {currentChallenge.title}
+        </h2>
+        <p className="text-gray-600 text-sm mb-3">{currentChallenge.description}</p>
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-xs text-gray-500">Progress</span>
+          <span className="text-xs text-gray-500">{currentChallenge.progress}%</span>
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div 
+            className="bg-purple-600 h-2 rounded-full transition-all duration-300" 
+            style={{ width: `${currentChallenge.progress}%` }}
+          ></div>
+        </div>
+        <p className="text-xs text-gray-500 mt-2">Due: {currentChallenge.dueDate}</p>
+      </div>
+
+      {/* Quick Leadership Actions */}
+      <div className="grid grid-cols-2 gap-4">
+        <button 
+          onClick={() => setActiveTab('develop')}
+          className="bg-blue-500 text-white p-4 rounded-lg text-center"
+        >
+          <UserPlus size={24} className="mx-auto mb-2" />
+          <div className="text-sm font-medium">Develop Someone</div>
+        </button>
+        <button 
+          onClick={() => setActiveTab('scenarios')}
+          className="bg-green-500 text-white p-4 rounded-lg text-center"
+        >
+          <Coffee size={24} className="mx-auto mb-2" />
+          <div className="text-sm font-medium">Leadership Scenarios</div>
+        </button>
+      </div>
+    </div>
+  );
+
+  // Leadership Examples Tab
+  const LeadersTab = () => (
+    <div className="space-y-4 pb-20">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">👨‍🍳 Leadership Examples</h1>
+      <p className="text-sm text-gray-600 mb-4">Learn from leaders who built great restaurant empires and teams</p>
+      
+      {leadershipExamples.map((leader, index) => (
+        <div key={index} className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="flex items-start space-x-4">
+            <div className="text-3xl">{leader.image}</div>
+            <div className="flex-1">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-semibold text-gray-800">{leader.name}</h3>
+                  <p className="text-sm text-gray-600">{leader.title}</p>
+                  <p className="text-sm font-medium text-orange-600 mt-1">"{leader.lesson}"</p>
+                  <div className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded mt-2 inline-block">
+                    Focus: {leader.focus}
+                  </div>
+                </div>
+                <button
+                  onClick={() => toggleActivity(leader.name.toLowerCase().split(' ')[1] || leader.name.toLowerCase())}
+                  className={`p-2 rounded-full ${
+                    leader.completed ? 'text-green-600' : 'text-gray-400'
+                  }`}
+                >
+                  {leader.completed ? <CheckCircle size={20} /> : <Circle size={20} />}
+                </button>
+              </div>
+              
+              <div className="mt-2 p-2 bg-orange-50 rounded text-xs text-orange-700">
+                <strong>DSG Manager Application:</strong> {leader.managerApplication}
+              </div>
+              
+              <div className="flex space-x-2 mt-3">
+                <button className="flex items-center space-x-1 bg-red-50 text-red-600 px-3 py-1 rounded text-xs">
+                  <Play size={12} />
+                  <span>Watch</span>
+                </button>
+                <button className="flex items-center space-x-1 bg-blue-50 text-blue-600 px-3 py-1 rounded text-xs">
+                  <FileText size={12} />
+                  <span>Case Study</span>
+                </button>
+                <button className="flex items-center space-x-1 bg-green-50 text-green-600 px-3 py-1 rounded text-xs">
+                  <MessageCircle size={12} />
+                  <span>Apply to DSG</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  // Develop Others Tab - Core leadership function
+  const DevelopOthersTab = () => (
+    <div className="space-y-6 pb-20">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">👥 Developing Your Team</h1>
+      
+      {/* Current Development Projects */}
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <h2 className="text-lg font-semibold mb-4">Current Development Projects</h2>
+        
+        <div className="space-y-4">
+          <div className="border-l-4 border-orange-400 pl-4 bg-orange-50 p-3 rounded">
+            <h3 className="font-medium text-gray-800">Will - Communication & Initiative</h3>
+            <p className="text-sm text-gray-600">Focus: Softening tone, taking more initiative</p>
+            <div className="flex justify-between items-center mt-2">
+              <div className="text-xs text-gray-500">Progress: Communication 3→4/5, Initiative 2→4/5</div>
+              <div className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded">Active</div>
+            </div>
+          </div>
+          
+          <div className="border-l-4 border-blue-400 pl-4 bg-blue-50 p-3 rounded">
+            <h3 className="font-medium text-gray-800">Sarah - Leadership Confidence</h3>
+            <p className="text-sm text-gray-600">Focus: Speaking up in meetings, decision-making confidence</p>
+            <div className="flex justify-between items-center mt-2">
+              <div className="text-xs text-gray-500">Target: Senior crew → Shift leader readiness</div>
+              <div className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded">Planning</div>
+            </div>
+          </div>
+          
+          <div className="border-l-4 border-green-400 pl-4 bg-green-50 p-3 rounded">
+            <h3 className="font-medium text-gray-800">Tom - Customer Service Leadership</h3>
+            <p className="text-sm text-gray-600">Focus: Handling difficult customers, training others</p>
+            <div className="flex justify-between items-center mt-2">
+              <div className="text-xs text-gray-500">Strength-based development opportunity</div>
+              <div className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded">Success</div>
+            </div>
+          </div>
+        </div>
+        
+        <button className="w-full mt-4 bg-orange-500 text-white py-2 rounded">
+          + Add New Development Project
+        </button>
+      </div>
+
+      {/* Development Tools */}
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <h2 className="text-lg font-semibold mb-4">Development Tools & Frameworks</h2>
+        <div className="grid grid-cols-1 gap-3">
+          <button className="text-left bg-gray-50 p-3 rounded border">
+            <div className="font-medium">📋 Development Planning Template</div>
+            <div className="text-sm text-gray-600">Like Will's appraisal-based development plan</div>
+          </button>
+          <button className="text-left bg-gray-50 p-3 rounded border">
+            <div className="font-medium">🎯 SOFT Feedback Method</div>
+            <div className="text-sm text-gray-600">Start positive, Observe, Focus, Thank - for difficult conversations</div>
+          </button>
+          <button className="text-left bg-gray-50 p-3 rounded border">
+            <div className="font-medium">📈 Progress Tracking Sheets</div>
+            <div className="text-sm text-gray-600">Weekly/monthly review templates for development meetings</div>
+          </button>
+          <button className="text-left bg-gray-50 p-3 rounded border">
+            <div className="font-medium">🔄 360° Feedback Process</div>
+            <div className="text-sm text-gray-600">Getting peer and customer feedback on development progress</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Leadership Scenarios Tab
+  const ScenariosTab = () => (
+    <div className="space-y-6 pb-20">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">☕ Leadership Scenarios</h1>
+      <p className="text-sm text-gray-600 mb-4">Practice complex leadership situations you face as a DSG manager</p>
+      
+      {/* Scenario Categories */}
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-center">
+          <div className="text-2xl mb-2">👥</div>
+          <div className="text-sm font-medium text-red-800">Team Conflicts</div>
+          <div className="text-xs text-red-600">Managing disputes</div>
+        </div>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+          <div className="text-2xl mb-2">📈</div>
+          <div className="text-sm font-medium text-blue-800">Performance Issues</div>
+          <div className="text-xs text-blue-600">Difficult conversations</div>
+        </div>
+        <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+          <div className="text-2xl mb-2">🎯</div>
+          <div className="text-sm font-medium text-green-800">Development Challenges</div>
+          <div className="text-xs text-green-600">Growing your team</div>
+        </div>
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
+          <div className="text-2xl mb-2">⚡</div>
+          <div className="text-sm font-medium text-purple-800">Crisis Leadership</div>
+          <div className="text-xs text-purple-600">Under pressure</div>
+        </div>
+      </div>
+
+      {/* Sample Leadership Scenarios */}
+      <div className="space-y-4">
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="flex items-start space-x-3">
+            <div className="text-2xl">👥</div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-800">The Underperforming Star Employee</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Your best server (like Will) has great technical skills but their communication tone 
+                is affecting team morale and customer satisfaction. Other staff are starting to complain.
+              </p>
+              <div className="mt-3 space-y-2">
+                <button className="w-full text-left bg-gray-50 p-2 rounded text-sm hover:bg-gray-100">
+                  How do you address this without damaging their confidence? →
+                </button>
+                <button className="w-full text-left bg-gray-50 p-2 rounded text-sm hover:bg-gray-100">
+                  What development plan would you create? →
+                </button>
+                <button className="w-full text-left bg-gray-50 p-2 rounded text-sm hover:bg-gray-100">
+                  How do you manage the team dynamics? →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="flex items-start space-x-3">
+            <div className="text-2xl">📈</div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-800">The Promotion Decision Dilemma</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                You have two candidates for shift leader: one with great technical skills but 
+                poor people skills, another with great people skills but inconsistent performance.
+              </p>
+              <div className="mt-3">
+                <button className="w-full bg-blue-500 text-white py-2 rounded text-sm">
+                  Practice This Leadership Decision
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg border border-gray-200 p-4">
+          <div className="flex items-start space-x-3">
+            <div className="text-2xl">⚡</div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-800">Crisis & Change Management</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Corporate announces significant changes to operations. Your team is worried about 
+                job security. Morale is dropping and you need to maintain performance while managing uncertainty.
+              </p>
+              <div className="mt-3">
+                <button className="w-full bg-purple-500 text-white py-2 rounded text-sm">
+                  Practice Crisis Communication
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Leadership Network Tab
+  const NetworkTab = () => (
+    <div className="space-y-6 pb-20">
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">🌐 Leadership Network</h1>
+      
+      {/* DSG Leadership Community */}
+      <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+        <h2 className="text-lg font-semibold text-orange-800 mb-3">🍕 DSG Leadership Community</h2>
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-orange-600">2</div>
+            <div className="text-xs text-gray-600">DSG Leaders</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-600">3</div>
+            <div className="text-xs text-gray-600">Locations</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-green-600">15</div>
+            <div className="text-xs text-gray-600">Team Members</div>
+          </div>
+        </div>
+        
+        <div className="space-y-3">
+          <div className="flex items-center space-x-3 bg-white p-3 rounded border">
+            <div className="text-2xl">👨‍💼</div>
+            <div className="flex-1">
+              <p className="font-medium text-gray-800">Joe - DSG Manager</p>
+              <p className="text-xs text-gray-600">Leadership development, team performance</p>
+            </div>
+            <div className="text-xs text-green-600">Online</div>
+          </div>
+          <div className="flex items-center space-x-3 bg-white p-3 rounded border">
+            <div className="text-2xl">👩‍💼</div>
+            <div className="flex-1">
+              <p className="font-medium text-gray-800">Aoife - DSG Leader</p>
+              <p className="text-xs text-gray-600">Culture development, team building</p>
+            </div>
+            <div className="text-xs text-green-600">Online</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Leadership Discussions */}
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <h2 className="text-lg font-semibold mb-4">💬 Leadership Discussions</h2>
+        <div className="space-y-3">
+          <div className="border-l-4 border-orange-400 pl-3">
+            <p className="font-medium text-gray-800">Best practices for developing communication skills in team members?</p>
+            <p className="text-xs text-gray-600">2 replies • Joe asking for advice on Will's development</p>
+          </div>
+          <div className="border-l-4 border-blue-400 pl-3">
+            <p className="font-medium text-gray-800">How do you balance high standards with team morale?</p>
+            <p className="text-xs text-gray-600">5 replies • Aoife sharing challenges</p>
+          </div>
+          <div className="border-l-4 border-green-400 pl-3">
+            <p className="font-medium text-gray-800">Succession planning: identifying and developing future leaders</p>
+            <p className="text-xs text-gray-600">8 replies • Strategic discussion</p>
+          </div>
+        </div>
+        <button className="w-full mt-4 bg-orange-500 text-white py-2 rounded">
+          Start Leadership Discussion
+        </button>
+      </div>
+
+      {/* External Leadership Resources */}
+      <div className="bg-white rounded-lg border border-gray-200 p-4">
+        <h2 className="text-lg font-semibold mb-4">📚 Leadership Learning Resources</h2>
+        <div className="space-y-2">
+          <button className="w-full text-left bg-gray-50 p-3 rounded border text-sm">
+            📹 "Leading High-Performance Restaurant Teams" - 15 min masterclass
+          </button>
+          <button className="w-full text-left bg-gray-50 p-3 rounded border text-sm">
+            🎧 "The Restaurant Manager's Leadership Podcast" - Weekly episodes
+          </button>
+          <button className="w-full text-left bg-gray-50 p-3 rounded border text-sm">
+            📖 "Setting the Table" by Danny Meyer - Leadership through hospitality
+          </button>
+          <button className="w-full text-left bg-gray-50 p-3 rounded border text-sm">
+            📋 "Crucial Conversations" toolkit for difficult leadership moments
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="max-w-md mx-auto bg-gray-50 min-h-screen">
+      {/* Content */}
+      <div className="p-4">
+        {activeTab === 'dashboard' && <DashboardTab />}
+        {activeTab === 'leaders' && <LeadersTab />}
+        {activeTab === 'develop' && <DevelopOthersTab />}
+        {activeTab === 'scenarios' && <ScenariosTab />}
+        {activeTab === 'network' && <NetworkTab />}
+      </div>
+      
+      {/* Navigation */}
+      <Navigation />
+    </div>
+  );
+};
+
+export default DSGLeadershipApp;
